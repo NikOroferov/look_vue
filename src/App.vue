@@ -1,10 +1,20 @@
 <template>
   <div class="app">
     <h1>Posts page</h1>
-    <my-button
-      @click="showDialog"
-      class="create-post__button"
-    >Create new post</my-button>
+    <my-input
+      v-model:value="searchQuery"
+      placeholder="Search post by title..."
+    />
+    <div class="app__buttons">
+      <my-button
+        @click="showDialog"
+        class="create-post__button"
+      >Create new post</my-button>
+      <my-select
+        v-model="selectedSort"
+        :options="sortOption"
+      />
+    </div>
 
     <my-dialog v-model:show="dialogVisible">
       <h3>Create post</h3>
@@ -15,7 +25,7 @@
 
     <PostList
       v-if="!isPostsLoading"
-      :posts="posts"
+      :posts="sortedAndSearchedPosts"
       @remove="removePost"
     />
     <h3 v-else>Loading...</h3>
@@ -36,6 +46,12 @@ export default {
       posts: [],
       dialogVisible: false,
       isPostsLoading: false,
+      selectedSort: '',
+      sortOption: [
+        {value: 'title', name: 'Sort by title'},
+        {value: 'body', name: 'Sort by description'},
+      ],
+      searchQuery: '',
     }
   },
   methods: {
@@ -54,6 +70,7 @@ export default {
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
+
         const responce = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
         this.posts = responce.data;
 
@@ -66,6 +83,19 @@ export default {
   },
   mounted() {
     this.fetchPosts()
+  },
+  computed: {
+    sortedPost() {
+      return [...this.posts].sort((a, b) => {
+        return a[this.selectedSort]?.localeCompare(b[this.selectedSort]);
+      })
+    },
+    sortedAndSearchedPosts() {
+      return this.sortedPost.filter(post => post.title.includes(this.searchQuery))
+    }
+  },
+  watch: {
+
   }
 }
 </script>
@@ -81,7 +111,9 @@ export default {
   padding: 15px;
 }
 
-.create-post__button{
+.app__buttons{
+  display: flex;
+  justify-content: space-between;
   margin-top: 15px;
 }
 </style>
