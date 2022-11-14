@@ -38,5 +38,12 @@ export default {
   border: 2px solid teal;
   width: 150px;
   text-align: center;
+  color: teal;
+  cursor: pointer;
+}
+
+.select:hover,
+.select:focus{
+  background-color: ghostwhite;
 }
 </style>

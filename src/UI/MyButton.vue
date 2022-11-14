@@ -20,6 +20,6 @@
 }
 
 .button:hover, .button:focus {
-  background-color: whitesmoke;
+  background-color: ghostwhite;
 }
 </style>
